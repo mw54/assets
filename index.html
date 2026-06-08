@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Assets</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --fg: #000;
+            --bg: #fff;
+            --dim: #666;
+            font-size: 14px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --fg: #fff;
+                --bg: #000;
+                --dim: #999;
+            }
+        }
+
+        .card {
+            width: 320px;
+            border: 1px solid var(--fg);
+        }
+
+        .section {
+            margin: 24px 24px 24px 24px;
+        }
+
+        .group {
+            margin: 16px 0px 16px 0px;
+        }
+
+        .row {
+            margin: 12px 0px 12px 0px;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: 'Helvetica Neue', sans-serif;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        label, .input, .button {
+            display: block;
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            align-self: flex-end;
+            transition: 0.15s;
+        }
+
+        label {
+            color: var(--dim);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .input {
+            border-bottom: 1px solid var(--dim);
+            padding: 4px 0px 4px 0px;
+            color: var(--fg);
+            font-family: Menlo, monospace;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .button {
+            border: 1px solid var(--dim);
+            padding: 8px 0;
+            color: var(--dim);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .input:hover, .input:focus, .button:hover, .button:focus { 
+            color: var(--fg); 
+            border-color: var(--fg);
+        }
+
+        .button.active {
+            background: var(--fg);
+            color: var(--bg); 
+            border-color: var(--fg);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="section">
+            <div class="group">
+                <div class="row">
+                    <label for="token">token</label>
+                    <input id="token" class="input" type="text" autocorrect="off" autocapitalize="none" autocomplete="off" spellcheck="false">
+                </div>
+            
+                <div id="file-row" class="row" style="display:flex;gap:6px">
+                    <input id="file" style="display:none" type="file" onchange="document.getElementById('name').textContent = this.files[0]?.name ?? ''">
+                    <label for="file" id="pick" class="button" style="width:64px;padding:6px" tabindex="0" role="button">file</label>
+                    <span id="name" class="input"></span>
+                </div>
+            </div>
+
+            <div class="group">
+                <div class="row" style="display:flex">
+                    <button id="download" class="button" onclick="setMode('download')">download</button>
+                    <button id="upload" class="button" onclick="setMode('upload')">upload</button>
+                </div>
+
+                <div class="row">
+                    <button id="go" class="button" onclick="go()"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mode = 'download';
+        setMode(mode)
+
+        function setMode(m) {
+            mode = m;
+            document.getElementById('download').classList.toggle('active', mode === 'download');
+            document.getElementById('upload').classList.toggle('active', mode === 'upload');
+            document.getElementById('file-row').style.display = mode === 'upload' ? 'flex' : 'none';
+            document.getElementById('go').textContent = mode === 'download' ? 'get' : 'post';
+        }
+
+        function flash(text) {
+            document.getElementById('go').textContent = text;
+            setTimeout(() => setMode(mode), 1500);
+        }
+
+        function go() {
+            const token = document.getElementById('token').value;
+            if (!token) return document.getElementById('token').focus();
+
+            if (mode === 'download') {
+                fetch('/' + encodeURIComponent(token))
+                    .then(r => r.ok ? (window.location.href = '/' + encodeURIComponent(token)) : flash(r.status));
+            } else {
+                const file = document.getElementById('file').files[0];
+                if (!file) return document.getElementById('pick').focus();
+
+                const form = new FormData();
+                form.append('file', file);
+                fetch('/' + encodeURIComponent(token), { method: 'POST', body: form })
+                    .then(r => flash(r.status));
+            }
+        }
+    </script>
+</body>
+
+</html>
