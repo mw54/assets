@@ -67,6 +67,7 @@
         }
 
         label {
+            padding: 4px 0px 4px 0px;
             color: var(--dim);
             font-size: 10px;
             letter-spacing: 0.2em;
@@ -86,7 +87,7 @@
 
         .button {
             border: 1px solid var(--dim);
-            padding: 8px 0;
+            padding: 8px 0px 8px 0px;
             color: var(--dim);
             font-size: 10px;
             letter-spacing: 0.2em;
@@ -118,7 +119,7 @@
                     <input id="token" class="input" type="text" autocorrect="off" autocapitalize="none" autocomplete="off" spellcheck="false">
                 </div>
             
-                <div id="file-row" class="row" style="display:flex;gap:6px">
+                <div id="file-row" class="row" style="display:flex;gap:8px">
                     <input id="file" style="display:none" type="file" onchange="document.getElementById('name').textContent = this.files[0]?.name ?? ''">
                     <label for="file" id="pick" class="button" style="width:64px;padding:6px" tabindex="0" role="button">file</label>
                     <span id="name" class="input"></span>
