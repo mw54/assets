@@ -1,10 +1,11 @@
+import os
 import sqlite3
 import flask
 import datetime
 
 app = flask.Flask(__name__)
-app.config['DATABASE_PATH'] = '/home/michael/assets/assets.db'
-app.config['INDEX_PATH'] = '/home/michael/assets/index.html'
+app.config['DATABASE_PATH'] = os.environ['DATABASE_PATH']
+app.config['INDEX_PATH'] = os.environ['INDEX_PATH']
 
 def initialize():
     with sqlite3.connect(app.config['DATABASE_PATH']) as conn:
