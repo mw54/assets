@@ -4,24 +4,26 @@ A minimal file server with token-based access control and request logging. Each 
 
 ## Setup
 
-Dependencies: Python 3, Flask
+Dependencies: Python 3, Flask, Gunicorn
+
+Run the setup script with your chosen install path:
 
 ```sh
-pip install flask
+bash setup.sh /path/to/install
 ```
 
-Edit the config paths in `app.py`:
+This will:
+- Create a Python virtual environment and install Flask and Gunicorn
+- Register and start an `assets.service` systemd unit
 
-```python
-app.config['DATABASE_PATH'] = '/path/to/assets.db'
-app.config['INDEX_PATH']    = '/path/to/index.html'
-```
+The service sets the following environment variables:
 
-Run:
+| variable | value |
+|---|---|
+| `DATABASE_PATH` | `<install_path>/assets.db` |
+| `INDEX_PATH` | `<install_path>/index.html` |
 
-```sh
-python app.py
-```
+The server binds to `127.0.0.1:7000`. To expose it publicly, place a reverse proxy (e.g. nginx) in front of it.
 
 ## Database
 
